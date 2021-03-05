@@ -1,9 +1,5 @@
 import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Box,
-  CloseButton,
   Img,
   Input,
   InputGroup,
@@ -13,7 +9,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { GetServerSideProps } from "next";
-
+import React, { useEffect, useReducer, useState } from "react";
+import Error from "../components/Error";
+import { reducer } from "../utils/reducer";
+import { ICountry } from "../types/.";
 const getUrl = (arg: string) => {
   return [
     `http://api.nbp.pl/api/exchangerates/rates/a/${arg}`,
@@ -22,18 +21,31 @@ const getUrl = (arg: string) => {
   ];
 };
 
-import React, { useEffect, useState } from "react";
-export default function Home({ countries }) {
-  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+interface Props {
+  countries: ICountry[];
+}
+
+const Home: React.FC<Props> = ({ countries }) => {
+  const [state, dispatch] = useReducer(reducer, {
+    fromCurrencyCountry: countries[0],
+    toCurrencyCountry: countries[0],
+    fromCurrency: null,
+    toCurrency: null,
+    error: "",
+  });
+
+  const [fromCurrencyCountry, setFromCurrencyCountry] = useState(countries[0]);
+  const [toCurrencyCountry, setToCurrencyCountry] = useState(countries[0]);
   const [currencyData, setCurrencyData] = useState(null);
   const [error, setError] = useState("");
   const [value, setValue] = useState(0);
+  console.log(currencyData);
   useEffect(() => {
     const fetchCurrency = async () => {
       setError("");
       try {
         const response = await Promise.any(
-          getUrl(selectedCountry.currency.code).map(async (el) => {
+          getUrl(fromCurrencyCountry.currency.code).map(async (el) => {
             const res = await fetch(el);
 
             return res.json();
@@ -46,18 +58,17 @@ export default function Home({ countries }) {
         setError("No data about such a currency in given country");
       }
     };
-    if (selectedCountry) {
+    if (fromCurrencyCountry) {
       fetchCurrency();
     }
-    console.log(selectedCountry);
-  }, [selectedCountry]);
+  }, [fromCurrencyCountry]);
 
   return (
     <Box w="100%" p="20px">
       <Select
-        value={JSON.stringify(selectedCountry)}
+        value={JSON.stringify(fromCurrencyCountry)}
         w="30%"
-        onChange={(e) => setSelectedCountry(JSON.parse(e.target.value))}
+        onChange={(e) => setFromCurrencyCountry(JSON.parse(e.target.value))}
       >
         {countries.map((el, i) => (
           <option
@@ -70,14 +81,14 @@ export default function Home({ countries }) {
         ))}
       </Select>
 
-      {selectedCountry && currencyData && (
+      {fromCurrencyCountry && currencyData && (
         <>
           <InputGroup mt="20px" w="30%">
             <InputLeftElement
               pointerEvents="none"
               children={
                 <Img
-                  src={selectedCountry.flag}
+                  src={fromCurrencyCountry.flag}
                   width="100%"
                   height={10}
                   p="3px"
@@ -117,16 +128,12 @@ export default function Home({ countries }) {
           </InputGroup>
         </>
       )}
-      {error && (
-        <Alert status="error" mt="30px" w="30%">
-          <AlertIcon />
-          <AlertTitle mr={2}>{error}</AlertTitle>
-          <CloseButton position="absolute" right="8px" top="8px" />
-        </Alert>
-      )}
+      {error && <Error error={error} />}
     </Box>
   );
-}
+};
+
+export default Home;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const response = await fetch("https://restcountries.eu/rest/v2/all");
