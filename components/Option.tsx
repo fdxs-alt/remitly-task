@@ -19,6 +19,11 @@ const Option: React.FC<Props> = ({ selectCountry, country }) => {
       onClick={() => {
         selectCountry(country);
       }}
+      onKeyPress={(e) => {
+        if (e.key === "Enter") {
+          selectCountry(country);
+        }
+      }}
     >
       <Img src={country.flag} width={5} />
       <Text p="0px 4px">{country.name}</Text>

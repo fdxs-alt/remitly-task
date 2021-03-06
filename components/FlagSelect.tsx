@@ -1,8 +1,8 @@
-import { Img, Text, Box } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Img, Text, Box, Input } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
 import { ICountry } from "../types";
 import Option from "./Option";
-interface Props {
+export interface Props {
   countries: ICountry[];
   selectedCountry: ICountry;
   selectCountry: (country: ICountry) => void;
@@ -14,15 +14,29 @@ const FlagSelect: React.FC<Props> = ({
   selectCountry,
 }) => {
   const [selectOpen, setSelectOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>();
+  const filteredCountries = countries.filter((el) =>
+    el.name.toLowerCase().includes(filterValue.toLowerCase())
+  );
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    setFilterValue("");
+  }, [selectOpen]);
 
   return (
     <Box position="relative">
-      <Img
-        src={selectedCountry.flag}
-        width={50}
-        onClick={() => setSelectOpen(true)}
-        cursor="pointer"
-      />
+      <Box>
+        <Img
+          src={selectedCountry.flag}
+          width={50}
+          onClick={() => setSelectOpen(true)}
+          cursor="pointer"
+        />
+      </Box>
       {selectOpen && (
         <Box
           w="150px"
@@ -33,7 +47,17 @@ const FlagSelect: React.FC<Props> = ({
           zIndex={0}
           backgroundColor="white"
         >
-          {countries.map((el, i) => (
+          <Input
+            ref={inputRef}
+            type="text"
+            fontSize="12px"
+            height={25}
+            value={filterValue}
+            borderRadius={0}
+            mb={2}
+            onChange={(e) => setFilterValue(e.target.value)}
+          />
+          {filteredCountries.map((el, i) => (
             <Option
               key={i}
               country={el}

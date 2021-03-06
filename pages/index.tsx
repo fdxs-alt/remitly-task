@@ -1,26 +1,24 @@
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Text,
-} from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Error from "../components/Error";
 import { reducer } from "../utils/reducer";
-import { ICountry, ICurrency } from "../types/.";
-import FlagSelect from "../components/FlagSelect";
-import { fetchCountriesByUrl, getUrl } from "../utils/api";
+import { ICountry } from "../types/.";
+import { fetchCountriesByUrl } from "../utils/api";
+import FromCurrencyInput from "../components/FromCurrencyInput";
+import ToCurrencyInput from "../components/ToCurrencyInput";
+
+const PolishCurrency = {
+  code: "PLN",
+  currency: "PL",
+  rates: [
+    {
+      no: "",
+      mid: 1,
+      effectiveDate: "",
+    },
+  ],
+};
 
 interface Props {
   countries: ICountry[];
@@ -47,7 +45,6 @@ const Home: React.FC<Props> = ({ countries }) => {
   });
 
   const [value, setValue] = useState(0);
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const startFetching = useCallback(() => {
     dispatch({ type: "HANDLE_ERROR", payload: { error: "" } });
@@ -73,13 +70,15 @@ const Home: React.FC<Props> = ({ countries }) => {
   );
 
   const handleError = useCallback(
-    (country: ICountry) => {
-      dispatch({ type: "UPDATE_TO_CURR", payload: { curr: null } });
+    (country: ICountry, type: "UPDATE_TO_CURR" | "UPDATE_FROM_CURR") => {
       if (country.alpha2Code !== "PL") {
+        dispatch({ type, payload: { curr: null } });
         dispatch({
           type: "HANDLE_ERROR",
           payload: { error: "No data about such country" },
         });
+      } else {
+        dispatch({ type, payload: { curr: PolishCurrency } });
       }
     },
     [dispatch]
@@ -93,7 +92,7 @@ const Home: React.FC<Props> = ({ countries }) => {
 
         dispatch({ type: "UPDATE_FROM_CURR", payload: { curr: response } });
       } catch (error) {
-        handleError(fromCurrencyCountry);
+        handleError(fromCurrencyCountry, "UPDATE_FROM_CURR");
       }
       stopFetching();
     };
@@ -111,7 +110,7 @@ const Home: React.FC<Props> = ({ countries }) => {
 
         dispatch({ type: "UPDATE_TO_CURR", payload: { curr: response } });
       } catch (error) {
-        handleError(toCurrencyCountry);
+        handleError(toCurrencyCountry, "UPDATE_TO_CURR");
       }
       stopFetching();
     };
@@ -121,74 +120,24 @@ const Home: React.FC<Props> = ({ countries }) => {
     }
   }, [toCurrencyCountry]);
 
-  useEffect(() => {
-    if (value === 0) {
-      inputRef.current.value = String(0);
-    }
-
-    if (fromCurrency && !loading) {
-      if (!toCurrency) {
-        inputRef.current.value = String(fromCurrency.rates[0].mid * value);
-      } else {
-        inputRef.current.value = String(
-          (fromCurrency.rates[0].mid * value) / toCurrency.rates[0].mid
-        );
-      }
-    }
-  }, [value, toCurrencyCountry, fromCurrency, loading]);
-
   return (
     <Box w="100%" p="20px">
-      <FormControl padding={5} backgroundColor="white">
-        <FormLabel>Click on flag to select currency from</FormLabel>
-        <InputGroup w="30%">
-          <InputLeftElement
-            padding={1}
-            children={
-              <FlagSelect
-                countries={countries}
-                selectedCountry={fromCurrencyCountry}
-                selectCountry={selectFromCountry}
-              />
-            }
-          />
-          <Input
-            type="number"
-            placeholder="From currency"
-            value={value}
-            onChange={(e) => setValue(parseFloat(e.target.value) || 0)}
-          />
-          <InputRightElement
-            mr={2}
-            children={
-              <Text fontWeight="700">{fromCurrencyCountry.currency.code}</Text>
-            }
-          />
-        </InputGroup>
-      </FormControl>
-      <FormControl padding={5} mt={10} backgroundColor="white">
-        <FormLabel>Click on flag to select currency to</FormLabel>
-        <InputGroup w="30%">
-          <InputLeftElement
-            padding={1}
-            children={
-              <FlagSelect
-                countries={countries}
-                selectedCountry={toCurrencyCountry}
-                selectCountry={selectToCountry}
-              />
-            }
-          />
-          <Input type="number" ref={inputRef} min={0} isReadOnly={true} />
-          <InputRightElement
-            mr={2}
-            children={
-              <Text fontWeight="700">{toCurrencyCountry.currency.code}</Text>
-            }
-          />
-        </InputGroup>
-      </FormControl>
-
+      <FromCurrencyInput
+        countries={countries}
+        setValue={(num) => setValue(num)}
+        fromCurrencyCountry={fromCurrencyCountry}
+        value={value}
+        selectFromCountry={selectFromCountry}
+      />
+      <ToCurrencyInput
+        countries={countries}
+        value={value}
+        loading={loading}
+        fromCurrency={fromCurrency}
+        selectToCountry={selectToCountry}
+        toCurrency={toCurrency}
+        toCurrencyCountry={toCurrencyCountry}
+      />
       {error && <Error error={error} />}
     </Box>
   );
