@@ -1,23 +1,17 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Error from "../components/Error";
 import { reducer } from "../utils/reducer";
 import { ICountry } from "../types/.";
-import { fetchCountriesByUrl } from "../utils/api";
+import { fetchCountriesByCountryCode } from "../utils/api";
 import FromCurrencyInput from "../components/FromCurrencyInput";
 import ToCurrencyInput from "../components/ToCurrencyInput";
-
+import SwapButton from "../components/SwapButton";
 const PolishCurrency = {
   code: "PLN",
-  currency: "PL",
-  rates: [
-    {
-      no: "",
-      mid: 1,
-      effectiveDate: "",
-    },
-  ],
+  currency: "złoty polski",
+  mid: 1,
 };
 
 interface Props {
@@ -37,7 +31,7 @@ const Home: React.FC<Props> = ({ countries }) => {
     dispatch,
   ] = useReducer(reducer, {
     fromCurrencyCountry: countries[0],
-    toCurrencyCountry: countries[0],
+    toCurrencyCountry: countries[1],
     fromCurrency: null,
     toCurrency: null,
     error: "",
@@ -61,6 +55,10 @@ const Home: React.FC<Props> = ({ countries }) => {
     },
     [dispatch]
   );
+
+  const switchValues = useCallback(() => {
+    dispatch({ type: "SWITCH_VALUES" });
+  }, [dispatch]);
 
   const selectToCountry = useCallback(
     (country: ICountry) => {
@@ -90,9 +88,11 @@ const Home: React.FC<Props> = ({ countries }) => {
     const fetchCurrency = async () => {
       startFetching();
       try {
-        const response = await fetchCountriesByUrl(fromCurrencyCountry);
-
-        dispatch({ type: "UPDATE_FROM_CURR", payload: { curr: response } });
+        const response = await fetchCountriesByCountryCode(fromCurrencyCountry);
+        dispatch({
+          type: "UPDATE_FROM_CURR",
+          payload: { curr: { ...response } },
+        });
       } catch (error) {
         handleError(fromCurrencyCountry, "UPDATE_FROM_CURR");
       }
@@ -108,9 +108,12 @@ const Home: React.FC<Props> = ({ countries }) => {
     const fetchCurrency = async () => {
       startFetching();
       try {
-        const response = await fetchCountriesByUrl(toCurrencyCountry);
+        const response = await fetchCountriesByCountryCode(toCurrencyCountry);
 
-        dispatch({ type: "UPDATE_TO_CURR", payload: { curr: response } });
+        dispatch({
+          type: "UPDATE_TO_CURR",
+          payload: { curr: { ...response } },
+        });
       } catch (error) {
         handleError(toCurrencyCountry, "UPDATE_TO_CURR");
       }
@@ -131,6 +134,7 @@ const Home: React.FC<Props> = ({ countries }) => {
         value={value}
         selectFromCountry={selectFromCountry}
       />
+      <SwapButton handleClick={switchValues} />
       <ToCurrencyInput
         countries={countries}
         value={value}
@@ -140,6 +144,13 @@ const Home: React.FC<Props> = ({ countries }) => {
         toCurrency={toCurrency}
         toCurrencyCountry={toCurrencyCountry}
       />
+      {!error && !loading && fromCurrency && toCurrency && (
+        <Text>
+          1 {fromCurrency.code} ={" "}
+          {(fromCurrency.mid / toCurrency.mid).toPrecision(5)}
+          {toCurrency.code}
+        </Text>
+      )}
       {error && <Error error={error} />}
     </Box>
   );

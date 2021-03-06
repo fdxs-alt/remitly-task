@@ -11,9 +11,5 @@ export interface ICountry {
 export interface ICurrency {
   code: string;
   currency: string;
-  rates: {
-    no: string;
-    mid: number;
-    effectiveDate: string;
-  }[];
+  mid: number;
 }

@@ -39,13 +39,18 @@ type HANDLE_LOADING = {
   payload: { isLoading: boolean };
 };
 
+type SWITCH_VALUES = {
+  type: "SWITCH_VALUES";
+};
+
 type ACTION =
   | UPDATE_TO_COUNTRY
   | UPDATE_FROM_COUNTRY
   | UPDATE_TO_CURR
   | UPDATE_FROM_CURR
   | HANDLE_ERROR
-  | HANDLE_LOADING;
+  | HANDLE_LOADING
+  | SWITCH_VALUES;
 
 export const reducer = (state: State, action: ACTION) => {
   switch (action.type) {
@@ -61,6 +66,14 @@ export const reducer = (state: State, action: ACTION) => {
       return { ...state, toCurrency: action.payload.curr };
     case "HANDLE_LOADING":
       return { ...state, loading: action.payload.isLoading };
+    case "SWITCH_VALUES":
+      let fromCopy = { ...state.fromCurrencyCountry };
+      let toCopy = { ...state.toCurrencyCountry };
+      return {
+        ...state,
+        toCurrencyCountry: fromCopy,
+        fromCurrencyCountry: toCopy,
+      };
     default:
       return { ...state };
   }

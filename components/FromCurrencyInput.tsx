@@ -43,7 +43,7 @@ const FromCurrencyInput: React.FC<InputProps> = ({
           type="number"
           placeholder="From currency"
           value={value.toString()}
-          onChange={(e) => setValue(parseFloat(e.target.value) || 0)}
+          onChange={(e) => setValue(Math.abs(parseFloat(e.target.value)) || 0)}
         />
         <InputRightElement
           mr={2}

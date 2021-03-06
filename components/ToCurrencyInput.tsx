@@ -38,8 +38,7 @@ const ToCurrencyInput: React.FC<InputProps> = ({
     }
 
     if (fromCurrency && toCurrency && !loading) {
-      const result =
-        (fromCurrency.rates[0].mid * value) / toCurrency.rates[0].mid;
+      const result = (fromCurrency.mid * value) / toCurrency.mid;
       inputRef.current.value = (
         Math.round((result + Number.EPSILON) * 100000) / 100000
       ).toString();
@@ -47,7 +46,7 @@ const ToCurrencyInput: React.FC<InputProps> = ({
   }, [value, fromCurrency, toCurrency, loading]);
 
   return (
-    <FormControl padding={5} mt={10} backgroundColor="white">
+    <FormControl padding={5} backgroundColor="white">
       <FormLabel>Click on flag to select currency to</FormLabel>
       <InputGroup w="30%" size="lg">
         <InputLeftElement
