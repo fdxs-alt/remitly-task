@@ -75,7 +75,9 @@ const Home: React.FC<Props> = ({ countries }) => {
         dispatch({ type, payload: { curr: null } });
         dispatch({
           type: "HANDLE_ERROR",
-          payload: { error: "No data about such country" },
+          payload: {
+            error: `No data about ${country.name}. Pick another country`,
+          },
         });
       } else {
         dispatch({ type, payload: { curr: PolishCurrency } });

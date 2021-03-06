@@ -38,9 +38,10 @@ const ToCurrencyInput: React.FC<InputProps> = ({
     }
 
     if (fromCurrency && toCurrency && !loading) {
+      const result =
+        (fromCurrency.rates[0].mid * value) / toCurrency.rates[0].mid;
       inputRef.current.value = (
-        (fromCurrency.rates[0].mid * value) /
-        toCurrency.rates[0].mid
+        Math.round((result + Number.EPSILON) * 100000) / 100000
       ).toString();
     }
   }, [value, fromCurrency, toCurrency, loading]);
