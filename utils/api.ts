@@ -4,7 +4,6 @@ export const getUrl = (arg: string) => {
   return [
     `http://api.nbp.pl/api/exchangerates/rates/a/${arg}`,
     `http://api.nbp.pl/api/exchangerates/rates/b/${arg}`,
-    `http://api.nbp.pl/api/exchangerates/rates/c/${arg}`,
   ];
 };
 
