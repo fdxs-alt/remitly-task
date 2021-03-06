@@ -1,6 +1,7 @@
-import { Img, Text, Box, Input } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import { Img, Text, Box, Input, Flex } from "@chakra-ui/react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ICountry } from "../types";
+import useClickOutside from "../utils/useClickOutside";
 import Option from "./Option";
 export interface Props {
   countries: ICountry[];
@@ -16,8 +17,13 @@ const FlagSelect: React.FC<Props> = ({
   const [selectOpen, setSelectOpen] = useState(false);
   const [filterValue, setFilterValue] = useState("");
   const inputRef = useRef<HTMLInputElement | null>();
-  const filteredCountries = countries.filter((el) =>
-    el.name.toLowerCase().includes(filterValue.toLowerCase())
+  const containerRef = useRef<HTMLDivElement | null>();
+  const filteredCountries = useMemo(
+    () =>
+      countries.filter((el) =>
+        el.name.toLowerCase().includes(filterValue.toLowerCase())
+      ),
+    [filterValue]
   );
 
   useEffect(() => {
@@ -27,16 +33,22 @@ const FlagSelect: React.FC<Props> = ({
     setFilterValue("");
   }, [selectOpen]);
 
+  useClickOutside(containerRef, () => {
+    setSelectOpen(false);
+  });
+
   return (
-    <Box position="relative">
-      <Box>
-        <Img
-          src={selectedCountry.flag}
-          width={50}
-          onClick={() => setSelectOpen(true)}
-          cursor="pointer"
-        />
-      </Box>
+    <Box position="relative" ref={containerRef}>
+      <Flex
+        justifyContent="space-between"
+        align="center"
+        w="40px"
+        onClick={() => setSelectOpen(true)}
+        cursor="pointer"
+      >
+        <Img src={selectedCountry.flag} width={25} cursor="pointer" />
+        <Img src="/expand-button.svg" w="10px" />
+      </Flex>
       {selectOpen && (
         <Box
           w="150px"

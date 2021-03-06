@@ -29,9 +29,8 @@ const FromCurrencyInput: React.FC<InputProps> = ({
   return (
     <FormControl padding={5} backgroundColor="white">
       <FormLabel>Click on flag to select currency from</FormLabel>
-      <InputGroup w="30%">
+      <InputGroup w="30%" size="lg">
         <InputLeftElement
-          padding={1}
           children={
             <FlagSelect
               countries={countries}

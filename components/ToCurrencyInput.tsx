@@ -49,7 +49,7 @@ const ToCurrencyInput: React.FC<InputProps> = ({
   return (
     <FormControl padding={5} mt={10} backgroundColor="white">
       <FormLabel>Click on flag to select currency to</FormLabel>
-      <InputGroup w="30%">
+      <InputGroup w="30%" size="lg">
         <InputLeftElement
           padding={1}
           children={
