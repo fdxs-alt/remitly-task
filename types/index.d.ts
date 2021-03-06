@@ -3,6 +3,9 @@ export interface ICountry {
   alpha2Code: string;
   alpha3Code: string;
   flag: string;
+  currency: {
+    code: string;
+  };
 }
 
 export interface ICurrency {
