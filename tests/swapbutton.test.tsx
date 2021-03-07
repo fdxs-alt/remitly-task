@@ -1,17 +1,12 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "./custom-render";
 import SwapButtonComponent from "../components/SwapButton";
-import TestWrapper from "./TestWrapper";
 import userEvent from "@testing-library/user-event";
 
 const handleClick = jest.fn();
 
 let buttonEl: HTMLElement | null = null;
 beforeEach(() => {
-  render(
-    <TestWrapper>
-      <SwapButtonComponent handleClick={handleClick} />
-    </TestWrapper>
-  );
+  render(<SwapButtonComponent handleClick={handleClick} />);
   buttonEl = screen.getByTestId("button");
 });
 

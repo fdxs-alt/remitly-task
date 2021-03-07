@@ -1,7 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "./custom-render";
 import OptionComponent from "../components/Option";
 import { ICountry } from "../types";
-import TestWrapper from "./TestWrapper";
 import userEvent from "@testing-library/user-event";
 
 const country: ICountry = {
@@ -16,11 +15,7 @@ const country: ICountry = {
 const selectCountry = jest.fn((country: ICountry) => {});
 
 beforeEach(() => {
-  render(
-    <TestWrapper>
-      <OptionComponent country={country} selectCountry={selectCountry} />
-    </TestWrapper>
-  );
+  render(<OptionComponent country={country} selectCountry={selectCountry} />);
 });
 
 describe("Option Component", () => {
