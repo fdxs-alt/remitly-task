@@ -43,10 +43,16 @@ const FlagSelect: React.FC<Props> = ({
         justifyContent="space-between"
         align="center"
         w="40px"
+        data-testid="flag-selector"
         onClick={() => setSelectOpen(true)}
         cursor="pointer"
       >
-        <Img src={selectedCountry.flag} width={25} cursor="pointer" />
+        <Img
+          src={selectedCountry.flag}
+          width={25}
+          cursor="pointer"
+          alt={selectedCountry.name}
+        />
         <Img src="/expand-button.svg" w="10px" />
       </Flex>
       {selectOpen && (
@@ -57,6 +63,7 @@ const FlagSelect: React.FC<Props> = ({
           border="1px solid grey"
           position="absolute"
           zIndex={0}
+          data-testid="list"
           backgroundColor="white"
         >
           <Input
@@ -66,6 +73,7 @@ const FlagSelect: React.FC<Props> = ({
             height={25}
             value={filterValue}
             borderRadius={0}
+            placeholder="Type country name"
             mb={2}
             onChange={(e) => setFilterValue(e.target.value)}
           />

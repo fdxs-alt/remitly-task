@@ -16,7 +16,7 @@ const Option: React.FC<Props> = ({ selectCountry, country }) => {
       p={1}
       alignItems="center"
       tabIndex={0}
-      data-testid="option"
+      data-testid={`option-${country.name}`}
       onClick={() => {
         selectCountry(country);
       }}

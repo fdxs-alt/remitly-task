@@ -12,7 +12,7 @@ const country: ICountry = {
     code: "PLN",
   },
 };
-const selectCountry = jest.fn((country: ICountry) => {});
+const selectCountry = jest.fn();
 
 beforeEach(() => {
   render(<OptionComponent country={country} selectCountry={selectCountry} />);
@@ -20,7 +20,7 @@ beforeEach(() => {
 
 describe("Option Component", () => {
   it("Renders component properly", () => {
-    const wrapperEl = screen.getByTestId("option");
+    const wrapperEl = screen.getByTestId("option-Poland");
 
     expect(wrapperEl).toBeInTheDocument();
   });
@@ -32,7 +32,7 @@ describe("Option Component", () => {
   });
 
   it("Calls passed function on click", () => {
-    const wrapperEl = screen.getByTestId("option");
+    const wrapperEl = screen.getByTestId("option-Poland");
 
     userEvent.click(wrapperEl);
 
@@ -40,12 +40,13 @@ describe("Option Component", () => {
   });
 
   it("Calls passed function on Enter press", () => {
-    const wrapperEl = screen.getByTestId("option");
+    const wrapperEl = screen.getByTestId("option-Poland");
 
     fireEvent.keyPress(wrapperEl, {
       key: "Enter",
     });
 
     expect(selectCountry).toBeCalledTimes(1);
+    expect(selectCountry).toHaveBeenCalledWith(country);
   });
 });

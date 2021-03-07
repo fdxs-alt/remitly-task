@@ -59,7 +59,13 @@ const ToCurrencyInput: React.FC<InputProps> = ({
             />
           }
         />
-        <Input type="number" ref={inputRef} min={0} isReadOnly={true} />
+        <Input
+          data-testid="to-input"
+          type="number"
+          ref={inputRef}
+          min={0}
+          isReadOnly={true}
+        />
         <InputRightElement
           mr={2}
           children={

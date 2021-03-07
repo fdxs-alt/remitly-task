@@ -131,7 +131,6 @@ const Home: React.FC<Props> = ({ countries }) => {
         countries={countries}
         setValue={(num) => setValue(num)}
         fromCurrencyCountry={fromCurrencyCountry}
-        value={value}
         selectFromCountry={selectFromCountry}
       />
       <SwapButton handleClick={switchValues} />
