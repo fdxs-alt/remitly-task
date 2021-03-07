@@ -16,6 +16,7 @@ const Option: React.FC<Props> = ({ selectCountry, country }) => {
       p={1}
       alignItems="center"
       tabIndex={0}
+      data-testid="option"
       onClick={() => {
         selectCountry(country);
       }}
@@ -25,7 +26,7 @@ const Option: React.FC<Props> = ({ selectCountry, country }) => {
         }
       }}
     >
-      <Img src={country.flag} width={5} />
+      <Img src={country.flag} width={5} alt={country.name} />
       <Text p="0px 4px">{country.name}</Text>
     </Box>
   );

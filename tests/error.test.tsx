@@ -1,17 +1,19 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import ErrorComponent from "../components/Error";
 import TestWrapper from "./TestWrapper";
 
 const exampleError = "Error occured";
 
-it("Error component", () => {
-  render(
-    <TestWrapper>
-      <ErrorComponent error={exampleError} />
-    </TestWrapper>
-  );
+describe("Error component", () => {
+  it("Renders component with error string", () => {
+    const { getByText } = render(
+      <TestWrapper>
+        <ErrorComponent error={exampleError} />
+      </TestWrapper>
+    );
 
-  const el = screen.getByText(exampleError);
+    const el = getByText(exampleError);
 
-  expect(el).toBeInTheDocument();
+    expect(el).toBeInTheDocument();
+  });
 });

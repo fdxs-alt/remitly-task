@@ -1,0 +1,56 @@
+import { fireEvent, render, screen } from "@testing-library/react";
+import OptionComponent from "../components/Option";
+import { ICountry } from "../types";
+import TestWrapper from "./TestWrapper";
+import userEvent from "@testing-library/user-event";
+
+const country: ICountry = {
+  name: "Poland",
+  alpha2Code: "PL",
+  alpha3Code: "POL",
+  flag: "https://restcountries.eu/data/pol.svg",
+  currency: {
+    code: "PLN",
+  },
+};
+const selectCountry = jest.fn((country: ICountry) => {});
+
+beforeEach(() => {
+  render(
+    <TestWrapper>
+      <OptionComponent country={country} selectCountry={selectCountry} />
+    </TestWrapper>
+  );
+});
+
+describe("Option Component", () => {
+  it("Renders component properly", () => {
+    const wrapperEl = screen.getByTestId("option");
+
+    expect(wrapperEl).toBeInTheDocument();
+  });
+
+  it("Renders flag image properly", () => {
+    const imageEl = screen.getByAltText("Poland");
+
+    expect(imageEl).toBeInTheDocument();
+  });
+
+  it("Calls passed function on click", () => {
+    const wrapperEl = screen.getByTestId("option");
+
+    userEvent.click(wrapperEl);
+
+    expect(selectCountry).toBeCalledTimes(1);
+  });
+
+  it("Calls passed function on Enter press", () => {
+    const wrapperEl = screen.getByTestId("option");
+
+    fireEvent.keyPress(wrapperEl, {
+      key: "Enter",
+    });
+
+    expect(selectCountry).toBeCalledTimes(1);
+  });
+});

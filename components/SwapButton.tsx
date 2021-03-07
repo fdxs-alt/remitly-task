@@ -7,8 +7,17 @@ interface Props {
 
 const SwapButton: React.FC<Props> = ({ handleClick }): JSX.Element => {
   return (
-    <Button onClick={() => handleClick()}>
-      <UpDownIcon />
+    <Button
+      onClick={() => handleClick()}
+      type="button"
+      data-testid="button"
+      onKeyPress={(e) => {
+        if (e.key === "Enter") {
+          handleClick();
+        }
+      }}
+    >
+      <UpDownIcon alt="swap-icon" />
     </Button>
   );
 };
