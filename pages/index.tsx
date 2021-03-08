@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Spinner } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import React, { useCallback, useEffect, useReducer, useState } from "react";
 import Error from "../components/Error";
@@ -8,6 +8,7 @@ import { fetchCountriesByCountryCode } from "../utils/api";
 import FromCurrencyInput from "../components/FromCurrencyInput";
 import ToCurrencyInput from "../components/ToCurrencyInput";
 import SwapButton from "../components/SwapButton";
+
 const PolishCurrency = {
   code: "PLN",
   currency: "złoty polski",
@@ -150,6 +151,7 @@ const Home: React.FC<Props> = ({ countries }) => {
           {toCurrency.code}
         </Text>
       )}
+      {loading && <Spinner />}
       {error && <Error error={error} />}
     </Box>
   );
